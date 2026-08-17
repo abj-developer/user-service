@@ -4,6 +4,7 @@ spring:
 
 server:
   port: 9002
+  orward-headers-strategy: framework
 
 eureka:
   client:
