@@ -3,6 +3,8 @@ package com.abj.user_service.service;
 import com.abj.user_service.VO.Department;
 import com.abj.user_service.VO.ResponseTemplateVO;
 import com.abj.user_service.entity.User;
+import com.abj.user_service.event.UserCreatedEvent;
+import com.abj.user_service.event.UserEventProducer;
 import com.abj.user_service.repository.UserRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +15,33 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     private DepartmentFeignClient departmentFeignClient;
 
+    private final UserEventProducer userEventProducer;
+
+    public UserService(
+            UserRepository userRepository,
+            UserEventProducer userEventProducer) {
+
+        this.userRepository = userRepository;
+        this.userEventProducer = userEventProducer;
+    }
+
     public User saveUser(User user) {
         log.info("inside saveUser method of UserService");
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        UserCreatedEvent event = new UserCreatedEvent(
+                savedUser.getUserId(),
+                savedUser.getFirstName()+" "+savedUser.getLastName(),
+                savedUser.getEmail()
+        );
+
+        userEventProducer.publishUserCreated(event);
+        return savedUser;
+
     }
 
     @CircuitBreaker(
