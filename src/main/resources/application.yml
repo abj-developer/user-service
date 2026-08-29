@@ -8,6 +8,17 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+  datasource:
+    url: jdbc:mysql://mysql:3306/userdb
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 server:
   port: 9002
   forward-headers-strategy: framework
