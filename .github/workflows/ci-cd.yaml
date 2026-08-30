@@ -58,6 +58,11 @@ jobs:
       - name: Make Maven Wrapper executable
         run: chmod +x mvnw
 
+      - name: Verify MySQL
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "SELECT 1;"
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "SHOW DATABASES;"
+
       - name: Run tests
         run: ./mvnw clean test
 
@@ -100,7 +105,7 @@ jobs:
           script: |
             cd /home/ubuntu/deployment-config
 
-            export USER_SERVICE_TAG${{ inputs.image_tag || github.sha }}
+            export USER_SERVICE_TAG=${{ inputs.image_tag || github.sha }}
             echo "Deploying user-service:$USER_SERVICE_TAG"
             docker compose pull user-service
             docker compose up -d --no-build user-service
