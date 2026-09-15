@@ -39,7 +39,7 @@ public class UserController {
                     description = "Users fetched successfully"
             )
     })
-    @GetMapping({"/users", "/api/users"})
+    @GetMapping("/users")
     public ResponseEntity<ResponseDTO<java.util.List<UserResponseDTO>>> getUsers(@RequestParam(value = "departmentId", required = false) Long departmentId) {
         log.info("inside getUsers method of UserController with departmentId={}", departmentId);
         if (departmentId != null) {
@@ -62,7 +62,7 @@ public class UserController {
                     description = "Invalid User data"
             )
     })
-    @PostMapping({"/users", "/api/users"})
+    @PostMapping("/users")
     public ResponseEntity<ResponseDTO<UserResponseDTO>> saveUser(@Valid @RequestBody UserRequestDTO request){
         log.info("inside saveUser method of UserController");
         UserResponseDTO saved = userService.saveUser(request);
@@ -83,7 +83,7 @@ public class UserController {
                     description = "User not found"
             )
     })
-    @GetMapping({"/users/{id}", "/api/users/{id}"})
+    @GetMapping("/users/{id}")
     public ResponseEntity<ResponseDTO<UserResponseDTO>> getUserById(@PathVariable("id") Long userId) {
         log.info("inside getUserById method of UserController");
         return ResponseEntity.ok(ResponseDTO.success(userService.getUserById(userId)));
@@ -103,7 +103,7 @@ public class UserController {
                     description = "User not found"
             )
     })
-    @PutMapping({"/users/{id}", "/api/users/{id}"})
+    @PutMapping("/users/{id}")
     public ResponseEntity<ResponseDTO<UserResponseDTO>> updateUser(@PathVariable("id") Long userId,
                                      @Valid @RequestBody UserUpdateRequestDTO request) {
         log.info("inside updateUser method of UserController for userId={}", userId);
@@ -124,7 +124,7 @@ public class UserController {
                     description = "User not found"
             )
     })
-    @DeleteMapping({"/users/{id}", "/api/users/{id}"})
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<ResponseDTO<Void>> deleteUser(@PathVariable("id") Long userId) {
         log.info("inside deleteUser method of UserController for userId={}", userId);
         userService.deleteUser(userId);
