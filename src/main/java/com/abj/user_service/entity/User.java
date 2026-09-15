@@ -1,7 +1,7 @@
 package com.abj.user_service.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,40 +10,24 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-@Schema(description = "User information")
+@Table(
+        name = "users",
+        uniqueConstraints = @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Schema(
-            description = "Unique identifier of user",
-            example = "101"
-    )
     private Long userId;
 
-    @Schema(
-            description = "User's first name",
-            example = "Rahul"
-    )
     private String firstName;
 
-    @Schema(
-            description = "User's last name",
-            example = "Sharma"
-    )
     private String lastName;
 
-    @Schema(
-            description = "User email address",
-            example = "rahul@example.com"
-    )
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Schema(
-            description = "Department to which user belongs",
-            example = "101"
-    )
+    @NotNull(message = "departmentId must not be null")
     private Long departmentId;
 
 }
