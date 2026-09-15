@@ -1,5 +1,6 @@
 package com.abj.user_service.controller;
 
+import com.abj.user_service.VO.ResponseTemplateVO;
 import com.abj.user_service.dto.UserRequestDTO;
 import com.abj.user_service.dto.UserResponseDTO;
 import com.abj.user_service.dto.UserUpdateRequestDTO;
@@ -67,6 +68,26 @@ public class UserController {
         log.info("inside saveUser method of UserController");
         UserResponseDTO saved = userService.saveUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDTO.success(saved));
+    }
+
+    @Operation(
+            summary = "Get user with department",
+            description = "Fetches user details and department details by user ID using the existing service method"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User and department fetched successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @GetMapping({"/users/{id}/department"})
+    public ResponseEntity<ResponseDTO<ResponseTemplateVO>> getUserWithDepartment(@PathVariable("id") Long userId) {
+        log.info("inside getUserWithDepartment method of UserController");
+        return ResponseEntity.ok(ResponseDTO.success(userService.getUserWitDepartment(userId)));
     }
 
     @Operation(
