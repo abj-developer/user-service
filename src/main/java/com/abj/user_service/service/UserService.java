@@ -2,6 +2,7 @@ package com.abj.user_service.service;
 
 import com.abj.user_service.VO.Department;
 import com.abj.user_service.VO.ResponseTemplateVO;
+import com.abj.user_service.dto.ResponseDTO;
 import com.abj.user_service.dto.UserRequestDTO;
 import com.abj.user_service.dto.UserResponseDTO;
 import com.abj.user_service.dto.UserUpdateRequestDTO;
@@ -14,7 +15,9 @@ import com.abj.user_service.repository.UserRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -68,10 +71,20 @@ public class UserService {
     public ResponseTemplateVO getUserWitDepartment(Long userId) {
         ResponseTemplateVO responseTemplateVO = new ResponseTemplateVO();
         User user = userRepository.findByUserId(userId);
-        Department department =  departmentFeignClient.getDepartment(user.getDepartmentId());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
+        }
+
+        ResponseDTO<Department> departmentResponse =
+                departmentFeignClient.getDepartment(user.getDepartmentId());
+
+        Department department = departmentResponse != null && departmentResponse.getResult() != null
+                ? departmentResponse.getResult()
+                : null;
+
         responseTemplateVO.setUser(user);
         responseTemplateVO.setDepartment(department);
-        return  responseTemplateVO;
+        return responseTemplateVO;
     }
 
     public List<UserResponseDTO> getAllUsers() {
